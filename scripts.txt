@@ -1,4 +1,4 @@
-//@@ver 5
+//@@ver 7
 //@@log
 (function(){
   if (window.__tldLog) return;
@@ -215,10 +215,26 @@
       var pl = document.querySelector('#movie_player') || document.querySelector('.html5-video-player');
       var ad = pl && (pl.classList.contains('ad-showing') || pl.classList.contains('ad-interrupting'));
       if (pl && !pl.querySelector('#tld-adcover')) {
-        var cv = document.createElement('div');
-        cv.id = 'tld-adcover';
-        cv.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg><b>Anuncio eliminado</b><i></i><small>un momento…</small>';
-        pl.appendChild(cv);
+        try {
+          var NS = 'http://www.w3.org/2000/svg';
+          var cv = document.createElement('div');
+          cv.id = 'tld-adcover';
+          var sv = document.createElementNS(NS, 'svg');
+          sv.setAttribute('viewBox', '0 0 24 24');
+          sv.setAttribute('fill', 'none');
+          sv.setAttribute('stroke', '#d4af37');
+          sv.setAttribute('stroke-width', '1.2');
+          var ci = document.createElementNS(NS, 'circle');
+          ci.setAttribute('cx', '12'); ci.setAttribute('cy', '12'); ci.setAttribute('r', '10');
+          var pa = document.createElementNS(NS, 'path');
+          pa.setAttribute('d', 'M7.5 12.5l3 3 6-6.5');
+          sv.appendChild(ci); sv.appendChild(pa);
+          var tb = document.createElement('b'); tb.textContent = 'Anuncio eliminado';
+          var ti = document.createElement('i');
+          var ts = document.createElement('small'); ts.textContent = 'un momento\u2026';
+          cv.appendChild(sv); cv.appendChild(tb); cv.appendChild(ti); cv.appendChild(ts);
+          pl.appendChild(cv);
+        } catch (e) { L('ads.cubierta', e); }
       }
       if (ad && v) {
         if (!adSince) adSince = Date.now();
